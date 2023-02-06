@@ -1,0 +1,54 @@
+name: Get XSGD USDC liquidity    
+on: 
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  job1:
+    name: Start Get User Positions
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: xfers/scripts/GetLiquidityPosition
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4      
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: pip3 install -r requirements.txt
+      - name: Execute script
+        run: |
+          python3 getUserPositions.py
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "capture liquidity"
+          git push
+  job2:
+    name: Start getLiquidity
+    runs-on: ubuntu-latest
+    needs: job1
+    if: ${{ always() }}
+    defaults:
+      run:
+        working-directory: xfers/scripts/GetLiquidityPosition
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4      
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: pip3 install -r requirements.txt
+      - name: Execute script
+        run: |
+          git pull
+          python3 getLiquidity.py
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "capture liquidity"
+          git push
