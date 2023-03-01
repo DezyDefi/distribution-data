@@ -8,7 +8,7 @@ import csv
 from decimal import Decimal
 from web3 import Web3
 
-# GQL_URL='https://api.studio.thegraph.com/query/39657/dzy-str-all/v0.0.23'
+
 csv_name='liquidityAmounts.csv'
 GQL_URL='https://api.studio.thegraph.com/query/39657/dzy-str-13/v0.0.10'
 xsgdUsdcV3Pool="0x6279653c28f138C8B31b8A0F6F8cD2C58E8c1705"
@@ -59,18 +59,6 @@ def get_user_pos(res, csv_name):
                     'nftId':r['nftId'],
                     'liquidity':int(r['liquidity'])
                 }
-    # for r in withdrawRes:
-    #     if not userLiquidityMap.get(r['depositor']):
-    #         print('in 1')
-    #         userLiquidityMap[r['depositor']]={
-    #             'timestamp':int(r['blockTimestamp']),
-    #             'nftId':r['nftId'],
-    #             'liquidity':-int(r['liquidity'])
-    #         }
-    #     elif int(r['blockTimestamp']) > userLiquidityMap[r['depositor']]['timestamp']:
-    #         print('in 2')
-    #         print(userLiquidityMap[r['depositor']]['liquidity'], r['liquidity'])
-    #         userLiquidityMap[r['depositor']]['liquidity']=int(r['liquidity'])
 
     #Convert to column
     df_struct=[[k, v['nftId'], v['liquidity']] for k,v in userLiquidityMap.items()]
