@@ -26,7 +26,8 @@ def get_user_pos(res, csv_name):
                 userLiquidityMap[row['address']]={
                     'timestamp':int(arrow.utcnow().shift(days=-1).timestamp()),
                     'nftId':int(row['nftId']),
-                    'liquidity':int(row['liquidity'])
+                    'liquidity':int(row['liquidity']),
+                    'blockNumber':int(row['blockNumber'])
                 }
     df=pd.read_csv(csv_name)
     lastQueryTime=df.iloc[-1,1]
@@ -39,6 +40,7 @@ def get_user_pos(res, csv_name):
             nftId
             liquidity
             blockTimestamp
+            blockNumber
         }
     }
     '''.replace('$lastQueryTime',str(lastQueryTime))
@@ -57,13 +59,15 @@ def get_user_pos(res, csv_name):
                 userLiquidityMap[r['depositor']]={
                     'timestamp':int(r['blockTimestamp']),
                     'nftId':r['nftId'],
-                    'liquidity':int(r['liquidity'])
+                    'liquidity':int(r['liquidity']),
+                    'blockNumber':int(r['blockNumber'])
                 }
 
     #Convert to column
-    df_struct=[[k, v['nftId'], v['liquidity']] for k,v in userLiquidityMap.items()]
-    liquidity_df=pd.DataFrame(df_struct,columns=['address','nftId','liquidity'])
+    df_struct=[[k, v['nftId'], v['liquidity'], v['blockNumber']] for k,v in userLiquidityMap.items()]
+    liquidity_df=pd.DataFrame(df_struct,columns=['address','nftId','liquidity','blockNumber'])
     liquidity_df['xsgd']=(int(df.iloc[-1,3])/10**6*liquidity_df['liquidity']).astype(int)
+    liquidity_df=liquidity_df[['address','nftId','liquidity','xsgd','blockNumber']]
     filename=arrow.utcnow().shift(days=-1).format('YYYYMMDD')
     liquidity_df.to_csv(f'userData/{filename}.csv', index=False)
 
