@@ -47,7 +47,7 @@ jobs:
         run: |
           git pull
           python3 getLiquidity.py
-          python3 pathData.py
+          python3 patchData.py
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
